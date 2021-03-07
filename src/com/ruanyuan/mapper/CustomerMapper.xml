@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruanyuan.mapper.CustomerMapper">
+	<!-- 定义sql片段 -->
+	<sql id="customerColums">
+		cust_id,cust_name,cust_create_id,cust_sourrce
+	</sql>
+	<select id="getCustomerById" parameterType="Integer"
+		resultType="customer">
+		select
+		<include refid="customerColums"></include>
+		customer where cust_id = #{cust_id}
+	</select>
+	<!-- 根据用户id查询是否存在关联 -->
+	<select id="getCountByUserId" resultType="Integer">
+		select count(*) from
+		customer where cust_userId = #{cust_Userid}
+	</select>
+	<select id="getCustomerByName" parameterType="String"
+		resultType="customer">
+		select * from customer where cust_name like
+		concat('%',#{value},'%')
+	</select>
+	<!-- 插入语句 数据库可以实现自动增长时 -->
+	<insert id="isnertCustomer" parameterType="customer"
+		useGeneratedKeys="true" keyProperty="custId"> insert into customer
+		(cust_name,cust_userId,cust_create_id,cust_sourrce,cust_industry,cust_address)
+		values
+		(#{custName},#{custUserid},#{custCreateId},#{custSourrce},#{custIndustry},#{custAddress})
+	</insert>
+	<!-- 插入语句，数据库不会实现自动增长时 -->
+	<!-- <insert id="isnertCustomer" parameterType="customer"> <selectKey keyProperty="cust_id" 
+		resultType="Integer" order="BEFORE"> select if(max(cust_id) is null,1,max(cust_id)+1) 
+		as newId from customer </selectKey> insert into customer (cust_name,cust_userId,cust_create_id,cust_sourrce,cust_industry,cust_address) 
+		values (#{custName},#{custUserid},#{custCreateId},#{custSourrce},#{custIndustry},#{custAddress}) 
+		</insert> -->
+	<!-- 通过id修改客户信息 -->
+	<update id="updateCustomerById">
+		update customer set cust_name =
+		#{custName,jdbcType=VARCHAR},cust_industry =
+		#{custIndustry,jdbcType=VARCHAR},
+		cust_address =
+		#{custAddress,jdbcType=VARCHAR} where cust_id =
+		#{custId,jdbcType=BIGINT}
+	</update>
+	<!-- 删除 客户信息 -->
+	<delete id="deleteById">
+		delete from customer
+		where cust_id =
+		#{custId,jdbcType=BIGINT}
+	</delete>
+	<!-- 根据用户ID进行删除操作 -->
+	<delete id="deleteByUserId">
+		delete from customer
+		where cust_userId = #{custUserid}
+	</delete>
+</mapper>

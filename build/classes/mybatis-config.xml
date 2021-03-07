@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- 导入环境配置 -->
+	<properties resource="db.properties" />
+	<settings>
+		<!--在通常情况下，java中的实体类中的属性一般是采用驼峰命名命名的，而数据库中表的字段则用下划线区分字母。在这种情况下，Mybatis提供了一个全局属性mapUnderscoreToCamelCase来解决两者名字不一致的问题。 -->
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+		<setting name="logImpl" value="LOG4J" />
+	</settings>
+	<typeAliases>
+		<!-- 设置类型的别名 -->
+		 <!--<typeAlias alias="customer" type="com.ruanyuan.pojo.Customer" />-->
+		 <!-- <typeAlias alias="user" type="com.ruanyuan.pojo.User" />-->
+		  <package name="com.runayuan.pojo"/> 
+	</typeAliases>
+	<environments default="mysql">
+		<environment id="mysql">
+			<transactionManager type="JDBC" />
+			<!-- 启动数据连接池 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="${jdbc.driver}" />
+				<property name="url" value="${jdbc.url}" />
+				<property name="username" value="${jdbc.username}" />
+				<property name="password" value="${jdbc.password}" />
+			</dataSource>
+		</environment>
+	</environments>
+	<!-- 映射文件 -->
+	<mappers>
+		<mapper resource="com/ruanyuan/mapper/CustomerMapper.xml" />
+		<mapper resource="com/ruanyuan/mapper/UserMapper.xml" />
+		<mapper resource="com/ruanyuan/mapper/InterviewMapper.xml"/>
+	</mappers>
+</configuration>
