@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruanyuan.mapper.Interview">
+	<resultMap id="BaseResultMap"
+		type="com.ruanyuan.pojo.Interview">
+		<id column="inter_id" jdbcType="BIGINT" property="interId" />
+		<result column="inter_custId" jdbcType="INTEGER"
+			property="interCustId" />
+		<result column="inter_userId" jdbcType="INTEGER"
+			property="interUserId" />
+		<result column="inter_record" jdbcType="VARCHAR"
+			property="interRecord" />
+		<result column="inter_datetime" jdbcType="TIMESTAMP"
+			property="interDatetime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		inter_id, inter_custId, inter_userId, inter_record,
+		inter_datetime,
+		create_time,
+		update_time
+	</sql>
+	<!-- 根据访谈id查询放单信息 -->
+	<select id="getByPrimaryKey" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from interview
+		where inter_id = #{interId,jdbcType=BIGINT}
+	</select>
+	<!-- 添加新的访谈信息 -->
+	<insert id="insertInterviewInfo" useGeneratedKeys="true"
+		keyProperty="interId">
+		insert into interview
+		values(null,#{interCustId},#{interUserId},#{interRecord},#{interDatetime})
+	</insert>
+	<!-- 根据访谈ID修改访谈信息 -->
+	<update id="updateInterviewById">
+		update interview set
+		inter_record=#{interRecord},inter_datetime = #{interDatetime} where
+		inter_id=#{interId}
+	</update>
+	<!-- 根据访谈id删除访谈信息 -->
+	<delete id="deleteInterviewById">
+		delete from interview
+			 where inter_id = #{interId}
+	</delete>
+</mapper>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruanyuan.mapper.UserMapper">
+	<resultMap id="BaseResultMap" type="com.ruanyuan.pojo.User">
+		<id column="user_id" jdbcType="BIGINT" property="userId" />
+		<result column="user_code" jdbcType="VARCHAR"
+			property="userCode" />
+		<result column="user_name" jdbcType="VARCHAR"
+			property="userName" />
+		<result column="user_password" jdbcType="VARCHAR"
+			property="userPassword" />
+		<result column="is_state" jdbcType="CHAR" property="state" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		user_id, user_code, user_name, user_password, is_state,
+		create_time,
+		update_time
+	</sql>
+
+	<select id="listUser" resultMap="BaseResultMap">
+		select * from login_user order
+		by user_id
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="Integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from login_user
+		where user_id = #{userId}
+	</select>
+
+	<select id="getUserByName" parameterType="String"
+		resultMap="BaseResultMap">
+		select * from login_user where user_name like
+		concat('%',#{value},'%')
+	</select>
+	<!-- 使用<if>元素完成根据单个条件查询或组合条件查询用户信息功能 -->
+	<select id="getUserByNameAndCode" resultMap="BaseResultMap" parameterType="customer">
+		select 
+		<include refid="Base_Column_List"/>
+		from login_user where 1=1
+		<if test="userName != null and userName != '' ">
+			and user_name = #{userName}
+		</if>
+		<if test="userCode !=null and userCode != '' ">
+			and user_code = #{userCode}
+		</if>
+	</select>
+	<!-- 使用<choose>、<when>、<otherwise>等元素完成根据单个条件查询用户信息功能 -->
+	<select id="getUserByNameOrCode" resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List"/>
+		from login_user where 1=1
+		<choose>
+			<when test="userName != null and userName != ''">
+				and user_name = #{userName}
+			</when>
+			<when test="userCode !=null and userCode != '' ">
+				and user_code = #{userCode}
+			</when>
+			<otherwise>
+				and user user_name = null
+			</otherwise>
+		</choose>
+	</select>
+	<!-- 使用<where>等元素替换where，结合<if>元素，完成条件查询用户信息功能 -->
+	<select id="getUserByCodeAndState" resultMap="BaseResultMap">
+		select 
+			<include refid="Base_Column_List"/>
+		from login_user
+		<where>
+			<if test="userCode != null and userCode != '' ">
+				and user_code = #{userCode}
+			</if>
+			<if test="state != null and state != '' ">
+				and is_state = #{state}
+			</if>
+		</where>
+	</select>
+	<!-- 使用<foreach>元素,完成批量添加用户信息功能 -->
+	<select id="getUserByIds" resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List"/>
+		from login_user where user_id in
+		<foreach collection="list" item="userId" index="index" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</select>
+	<!-- 添加新用户 -->
+	<insert id="insertUser" parameterType="user"
+		useGeneratedKeys="true" keyProperty="userId">
+		insert into
+		login_user(user_code,user_name,user_password,is_state) values
+		(#{userCode},#{userName},#{userPassword},#{state})
+	</insert>
+	<!-- 根据ID修改用户信息 -->
+	<update id="updateUserById">
+		update login_user
+		set user_code =
+		#{userCode,jdbcType=VARCHAR},
+		user_name = #{userName,jdbcType=VARCHAR},
+		user_password = #{userPassword,jdbcType=VARCHAR},
+		is_state =
+		#{state,jdbcType=CHAR}
+		where user_id = #{userId,jdbcType=BIGINT}
+	</update>
+	<!-- 使用<set>元素替换set，结合<if>元素，完成更新用户信息功能 -->
+	<update id="updateUser">
+		update login_user
+		<set>
+			<if test="userCode != null and userCode != '' ">
+				user_code = #{userCode},
+			</if>
+			<if test="userName != null and userName != '' ">
+				user_name = #{userName},
+			</if>
+			<if test="userPassword != null and userPassword != '' ">
+				user_password = #{userPassword},
+			</if>
+			<if test="state != null and state != '' ">
+				is_state = #{state}
+			</if>
+		</set>
+		where user_id = #{userId}
+	</update>
+	<!-- 根据用户id删除用户信息 -->
+	<delete id="deleteUserById">
+		delete from
+		login_user
+		where user_id =
+		#{userId,jdbcType=BIGINT}
+	</delete>
+</mapper>
