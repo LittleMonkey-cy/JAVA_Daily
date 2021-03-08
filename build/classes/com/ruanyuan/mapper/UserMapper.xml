@@ -79,6 +79,15 @@
 			</if>
 		</where>
 	</select>
+	<!-- 使用<foreach>元素,完成批量添加用户信息功能 -->
+	<select id="getUserByIds" resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List"/>
+		from login_user where user_id in
+		<foreach collection="list" item="userId" index="index" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</select>
 	<!-- 添加新用户 -->
 	<insert id="insertUser" parameterType="user"
 		useGeneratedKeys="true" keyProperty="userId">

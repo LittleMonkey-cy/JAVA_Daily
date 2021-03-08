@@ -1,8 +1,10 @@
 package com.ruanyuan.test;
+
 /**
  * @author 陈钰
  */
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
@@ -42,6 +44,7 @@ public class UserMapperTest {
 		// 释放资源
 		sqlSession.close();
 	}
+
 	/**
 	 * 根据单个条件查询或组合条件查询用户信息功能
 	 */
@@ -58,9 +61,9 @@ public class UserMapperTest {
 		// 释放资源
 		sqlSession.close();
 	}
+
 	/**
-	 * 根据单个条件查询或组合条件查询用户信息功能
-	 * 不论在编写测试方法时有几个条件，只根据第一个符合要求的查询条件查询客户信息功能 
+	 * 根据单个条件查询或组合条件查询用户信息功能 不论在编写测试方法时有几个条件，只根据第一个符合要求的查询条件查询客户信息功能
 	 */
 	@Test
 	public void getUserByNameOrCodeTest() {
@@ -68,13 +71,14 @@ public class UserMapperTest {
 		String sqlId = "com.ruanyuan.mapper.UserMapper.getUserByNameOrCode";
 		// 实例化对象
 		User user = new User();
-		 user.setUserName("赵云");
-		 user.setUserCode("1003");
+		user.setUserName("赵云");
+		user.setUserCode("1003");
 		List<User> userList = sqlSession.selectList(sqlId, user);
 		userList.forEach(users -> System.out.println(users));
 		// 释放资源
 		sqlSession.close();
 	}
+
 	/**
 	 * 使用where标签替换where 1=1
 	 */
@@ -84,9 +88,41 @@ public class UserMapperTest {
 		String sqlId = "com.ruanyuan.mapper.UserMapper.getUserByCodeAndState";
 		// 实例化对象
 		User user = new User();
-		 user.setUserCode("1003");
-		 user.setState("1");
+		user.setUserCode("1003");
+		user.setState("1");
 		List<User> userList = sqlSession.selectList(sqlId, user);
+		userList.forEach(users -> System.out.println(users));
+		// 释放资源
+		sqlSession.close();
+	}
+	/**
+	 * 根据id批量查询用户信息
+	 */
+	@Test
+	public void getUserByIdsTest() {
+		SqlSession sqlSession = MyBatisUtils.getSqlSession();
+		String sqlId = "com.ruanyuan.mapper.UserMapper.getUserByIds";
+		List<Integer> ids = new ArrayList<>();
+		ids.add(1);
+		ids.add(2);
+		ids.add(3);
+		List<User> userList = sqlSession.selectList(sqlId, ids);
+		userList.forEach(users -> System.out.println(users));
+		// 释放资源
+		sqlSession.close();
+	}
+	/**
+	 * 根据id批量添加用户信息
+	 */
+	@Test
+	public void insertUserByIdsTest() {
+		SqlSession sqlSession = MyBatisUtils.getSqlSession();
+		String sqlId = "com.ruanyuan.mapper.UserMapper.getUserByIds";
+		List<Integer> ids = new ArrayList<>();
+		ids.add(1);
+		ids.add(2);
+		ids.add(3);
+		List<User> userList = sqlSession.selectList(sqlId, ids);
 		userList.forEach(users -> System.out.println(users));
 		// 释放资源
 		sqlSession.close();
@@ -146,6 +182,7 @@ public class UserMapperTest {
 		// 关闭资源
 		sqlSession.close();
 	}
+
 	/**
 	 * 利用set标签改进修改语句的测试方法
 	 */
@@ -156,9 +193,9 @@ public class UserMapperTest {
 		// 实例化对象
 		User user = new User();
 		user.setUserCode("1003");
-	    user.setUserName("赵云");
+		user.setUserName("赵云");
 		// user.setUserPassword("123456");
-		 user.setState("0");
+		user.setState("0");
 		user.setUserId(BigInteger.valueOf(1));
 		int row = sqlSession.insert(sqlId, user);
 		// 通过返回受影响的行数来判断数据是否在内存中修改成功，进行信息提示
@@ -172,6 +209,7 @@ public class UserMapperTest {
 		// 关闭资源
 		sqlSession.close();
 	}
+
 	@Test
 	public void deleteUserById() {
 		// 连接数据库
@@ -182,20 +220,20 @@ public class UserMapperTest {
 		String sqlId2 = "com.ruanyuan.mapper.CustomerMapper.deleteByUserId";
 		// 查询出需要删除的客户的数量
 		int count1 = sqlSession.selectOne(sqlId1, 2);
-		if(count1 > 0) {
+		if (count1 > 0) {
 			System.out.println("客户表中存在该用户");
 		}
 		// 删除客户，返回受影响的条数（实际删除的数量）
 		int count2 = sqlSession.delete(sqlId2, 2);
 		if (count2 > 0) {
-			System.out.println("成功删除"+count2+"条客户信息");
+			System.out.println("成功删除" + count2 + "条客户信息");
 		}
 		// 提交事务
 		sqlSession.commit();
 		// 删除用户信息
 		int count3 = sqlSession.delete(sqlId, 2);
 		if (count3 > 0) {
-			System.out.println("成功删除"+count3+"条用户信息");
+			System.out.println("成功删除" + count3 + "条用户信息");
 		}
 		// 提交事务
 		sqlSession.commit();

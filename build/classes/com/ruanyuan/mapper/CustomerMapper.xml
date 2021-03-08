@@ -97,6 +97,19 @@
 		select * from customer where cust_name like
 		concat('%',#{value},'%')
 	</select>
+	<!-- 使用<foreach>元素,完成根据客户编号批量查询客户信息功能 -->
+	<select id="getCustomerByIds" resultMap="BaseResultMap">
+		select * from customer where cust_id in
+		<foreach collection="list" item="custId" index="index" open="(" separator="," close=")">
+			#{cust_id}
+		</foreach>
+	</select>
+	<!-- 使用<bind>元素,完成根据客户名称模糊查询客户信息功能 -->
+	<select id="getCustomerByNames" resultMap="BaseResultMap">
+		<!-- 使用bind拼接sql模糊查询 -->
+		<bind name="custName" value=" '%'+_paramter.getCustName() + '%' "/>
+		select * from customer where cust_name like #{custName}
+	</select>
 	<!-- 插入语句 数据库可以实现自动增长时 -->
 	<insert id="isnertCustomer" parameterType="customer"
 		useGeneratedKeys="true" keyProperty="custId"> insert into customer

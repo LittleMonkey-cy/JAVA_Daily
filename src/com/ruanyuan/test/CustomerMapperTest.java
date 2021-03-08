@@ -1,6 +1,7 @@
 package com.ruanyuan.test;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
@@ -30,6 +31,7 @@ public class CustomerMapperTest {
 		// 释放资源
 		sqlSession.close();
 	}
+
 	/**
 	 * 根据用户名和地址查询
 	 */
@@ -47,6 +49,7 @@ public class CustomerMapperTest {
 		// 关闭资源
 		sqlSession.close();
 	}
+
 	/**
 	 * 根据客户名或者地址来二选一的进行查询
 	 */
@@ -64,6 +67,7 @@ public class CustomerMapperTest {
 		// 关闭资源
 		sqlSession.close();
 	}
+
 	/**
 	 * 使用where标签sql语句中的where，不论在编写测试方法时有几个条件，只根据第一个符合要求的查询条件查询客户信息功能
 	 */
@@ -81,6 +85,7 @@ public class CustomerMapperTest {
 		// 关闭资源
 		sqlSession.close();
 	}
+
 	/**
 	 * 使用trim标签
 	 */
@@ -89,7 +94,7 @@ public class CustomerMapperTest {
 		SqlSession sqlSession = MyBatisUtils.getSqlSession();
 		String sqlId = "com.ruanyuan.mapper.CustomerMapper.getCustomerByIndustryOrName";
 		Customer customer = new Customer();
-		 customer.setCustName("刘");
+		customer.setCustName("刘");
 		customer.setCustIndustry("服务业");
 		List<Customer> customerList = sqlSession.selectList(sqlId, customer);
 		for (Customer customer2 : customerList) {
@@ -98,6 +103,47 @@ public class CustomerMapperTest {
 		// 关闭资源
 		sqlSession.close();
 	}
+
+	/**
+	 * 根据客户ID批量查询客户信息
+	 */
+	@Test
+	public void getCustomerByIdsTest() {
+		SqlSession sqlSession = MyBatisUtils.getSqlSession();
+		String sqlId = "com.ruanyuan.mapper.CustomerMapper.getCustomerByIds";
+		// 创建list集合
+		List<Integer> ids = new ArrayList<Integer>();
+		// 封装查询id
+		ids.add(2);
+		ids.add(3);
+		ids.add(4);
+		List<Customer> customerList = sqlSession.selectList(sqlId, ids);
+		for (Customer customer2 : customerList) {
+			System.out.println(customer2);
+		}
+		// 关闭资源
+		sqlSession.close();
+	}
+
+	/**
+	 * 根据客户名称查询客户信息（模糊查询）
+	 */
+	@Test
+	public void getCustomerByNamesTest() {
+		SqlSession sqlSession = MyBatisUtils.getSqlSession();
+		String sqlId = "com.ruanyuan.mapper.CustomerMapper.getCustomerByNames";
+		// 创建对象
+		Customer customer = new Customer();
+		customer.setCustName("刘");
+		List<Customer> customerList = sqlSession.selectList(sqlId, customer);
+		// 遍历输出客户信息
+		for (Customer customer1 : customerList) {
+			System.out.println(customer1);
+		}
+		// 关闭资源
+		sqlSession.close();
+	}
+
 	/**
 	 * 向客户表中添加数据
 	 */
@@ -126,6 +172,7 @@ public class CustomerMapperTest {
 		// 关闭资源
 		sqlSession.close();
 	}
+
 	/**
 	 * 根据客户id修改客户信息
 	 */
@@ -152,6 +199,7 @@ public class CustomerMapperTest {
 		sqlSession.close();
 
 	}
+
 	/**
 	 * 使用set标签改进后的更新语句
 	 */
@@ -178,6 +226,7 @@ public class CustomerMapperTest {
 		sqlSession.close();
 
 	}
+
 	/**
 	 * 根据客户id删除客户信息
 	 */
