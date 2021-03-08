@@ -1,17 +1,91 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruanyuan.mapper.CustomerMapper">
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruanyuan.mapper.Customer.mapper">
+	<resultMap id="BaseResultMap"
+		type="com.ruanyuan.pojo.Customer">
+		<id column="cust_id" property="custId"></id>
+		<result column="cust_name" property="custName"></result>
+		<result column="cust_userId" property="custUserId"></result>
+		<result column="cust_create_id" property="custCreateId"></result>
+		<result column="cust_sourrce" property="custSourrce"></result>
+		<result column="cust_industry" property="custIndusttry"></result>
+		<result column="cust_level" property="custLevel"></result>
+		<result column="cust_linkman" property="custLinkman"></result>
+		<result column="cust_phone" property="custPhone"></result>
+		<result column="cust_mobile" property="custMobile"></result>
+		<result column="cust_zipcode" property="custZipcode"></result>
+		<result column="cust_address" property="custAddress"></result>
+	</resultMap>
 	<!-- 定义sql片段 -->
 	<sql id="customerColums">
 		cust_id,cust_name,cust_create_id,cust_sourrce
 	</sql>
+	<!-- 根据客户id进行查询 -->
+
 	<select id="getCustomerById" parameterType="Integer"
-		resultType="customer">
+		resultMap="BaseResultMap">
 		select
-		<include refid="customerColums"></include>
+		<include refid="customerColums"/>
 		customer where cust_id = #{cust_id}
+	</select>
+	<!-- 根据客户名称和地址动态查询 -->
+	<select id="getCustomerByNameAndAddress" resultMap="BaseResultMap">
+		select * from customer where 1=1
+		<!-- 使用if标签进行多字段查询 -->
+		<if test="custName != null and custName != '' ">
+			and cust_name like concat('%',#{custName},'%')
+		</if>
+		<if test="custAddress !=null and custAddress != '' ">
+			and cust_address = #{custAddress}
+		</if>
+	</select>
+	<!-- 根据客户名称模糊查询或地址或电话不为空查询信息 -->
+	<select id="getCustomerByNameOrAddress" resultMap="BaseResultMap">
+		select * from customer where 1=1
+		<choose>
+			<when test="custName != null and custName != '' ">
+				and cust_name like concat('%',#{custName},'%')
+			</when>
+			<when test="custAddress != null and custAddress != '' ">
+				and cust_Address = #{custAddress}
+			</when>
+			<otherwise>
+				and cust_phone is not null
+			</otherwise>
+		</choose>
+	</select>
+	<!-- 使用where标签sql语句中的where，不论在编写测试方法时有几个条件，只根据第一个符合要求的查询条件查询客户信息功能 -->
+	<select id="getCustomerByIndustryAndName" resultMap="BaseResultMap">
+		select * from customer
+		<!-- 使用where标签替换sql语句中的where 1=1 -->
+		<where>
+			<if test="custIndustry != null and custIndustry != '' ">
+				and cust_industry = #{custIndustry}
+			</if>
+			<if test="custName != null and custName != '' ">
+				and cust_Name like concat('%',#{custName},'%')
+			</if>
+		</where>
+	</select>
+	<!-- 使用trim标签 -->
+	<select id="getCustomerByIndustryOrName" resultMap="BaseResultMap">
+		select * from customer
+		<!-- 使用trim标签替换where标签省略where 1=1 -->
+		<trim prefix="where" prefixOverrides="and">
+			<choose>
+				<when test="custName != null and custName != '' ">
+					and cust_name like concat('%',#{custName},'%')
+				</when>
+				<when test="custAddress != null and custAddress != '' ">
+					and cust_industry = #{custIndustry}
+				</when>
+				<otherwise>
+					and cust_phone is not null
+				</otherwise>
+			</choose>
+		</trim>
 	</select>
 	<!-- 根据用户id查询是否存在关联 -->
 	<select id="getCountByUserId" resultType="Integer">
@@ -19,7 +93,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		customer where cust_userId = #{cust_Userid}
 	</select>
 	<select id="getCustomerByName" parameterType="String"
-		resultType="customer">
+		resultMap="BaseResultMap">
 		select * from customer where cust_name like
 		concat('%',#{value},'%')
 	</select>
@@ -44,6 +118,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		cust_address =
 		#{custAddress,jdbcType=VARCHAR} where cust_id =
 		#{custId,jdbcType=BIGINT}
+	</update>
+	<!-- 使用<set>元素替换set，结合<if>元素，完成更新客户信息功能 -->
+	<update id="updateCustomer">
+		update customer
+		<!-- 使用set，if，标签相结合改进update语句 -->
+		<set>
+			<if test="custName != null and custName != '' ">
+				cust_name = #{custName},
+			</if>
+			<if test="custIndustry != null and custIndustry != '' ">
+				cust_industry = #{custIndustry},
+			</if>
+			<if test="custAddress != null and custAddress != '' ">
+				cust_address = #{custAddress}
+			</if>
+		</set>
+		where cust_id = #{custId}
 	</update>
 	<!-- 删除 客户信息 -->
 	<delete id="deleteById">
