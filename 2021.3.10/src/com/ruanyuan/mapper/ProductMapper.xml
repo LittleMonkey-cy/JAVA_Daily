@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruanyuan.mapper.ProductMapper">
+<!-- 为Order表中进行使用 -->
+	<select id="getProductByOrderId" resultType="product" parameterType="Integer">
+		select * from product where id in (select product_id from ordersitem where order_id = #{id})
+	</select>
+	<!-- 嵌套查询 多对多 -->
+	<select id="getProductById" resultMap = "BaseResultMap" parameterType="Integer">
+		select * from product where id = #{id}
+	</select>
+	<!-- 定义映射对象 -->
+	<resultMap type="product" id="BaseResultMap">
+		<collection property="orderList"  javaType="ArrayList" select="com.ruanyuan.mapper.OrderMapper.getOrderByProductId" column="id" ofType="Order"/>
+	</resultMap>
+	
+	<!-- 嵌套结果查询 -->
+	<select id="getAllProduct" resultMap="BaseResultMap1">
+		select
+			p.*,o.id oid,o.number onumber
+		from
+			product p
+		join
+			ordersitem ord
+		on
+			p.id = ord.product_id
+		join
+			order_master o
+		on
+			o.id = ord.order_id
+		where
+			p.id = #{id}
+	</select>
+	<resultMap type="product" id="BaseResultMap1">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="price" column="price"/>
+		<collection property="orderList" ofType="Order">
+			<id property="id" column="oid"/>
+			<result property="number" column="onumber"></result>
+		</collection>
+	</resultMap>
+</mapper>

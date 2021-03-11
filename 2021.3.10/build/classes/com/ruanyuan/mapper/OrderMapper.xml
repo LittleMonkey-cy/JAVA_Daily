@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruanyuan.mapper.OrderMapper">
+	<!-- 嵌套子查询 先在关联表中查询id，然后再根据id查询订单 -->
+	<select id="getOrderByProductId" resultType="order">
+		select * from order_master where id in (select order_id from ordersitem where product_id = #{id})
+	</select>
+	<!-- 嵌套查询 -->
+	<!-- 通过订单的id查询订单信息 -->
+	<select id = "getAllOrderById" resultMap="BaseResultMap">
+		select * from order_master where id = #{id}
+	</select>
+	<resultMap id ="BaseResultMap" type="order">
+		<collection property="productList" javaType="ArrayList" ofType="Product" select="com.ruanyuan.mapper.ProductMapper.getProductByOrderId" column="id"/>
+	</resultMap>
+	<!-- 嵌套结果查询 -->
+	<select id="getAllOrdeers" resultMap="BaseResultMap1">
+		select
+			 o.*,p.id pid,p.name pname,p.price
+		from
+			order_master o
+		join
+			ordersitem ord
+		on
+			ord.order_id = o.id
+		join
+			product p
+		on
+			ord.product_id = p.id
+		WHERE
+			o.id = #{id}
+		
+	</select>
+	<resultMap type="order" id="BaseResultMap1">
+		<id property="id" column="id"/>
+		<result property="number" column="number"/>
+		<collection property="productList" ofType="Product">
+			<id property="id" column="pid"/>
+			<result property="name" column="pname"/>
+			<result property="price" column="price"/>
+		</collection>
+	</resultMap>
+</mapper>

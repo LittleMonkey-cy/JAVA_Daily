@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruanyuan.mapper.UserMapper">
+	<!-- 嵌套查询 一对多<collection> -->
+	<select id = "getUserAndOrder" resultMap="BaseResultMap">
+		<!-- 根据用户id查询所有用户 -->
+		select * from user where id = #{id}
+	</select>
+	<!-- 通过userId查询订单信息 -->
+	<select id="getOrderByUserId" resultType="Order">
+		select * from order_master where user_id = #{userId}
+	</select>
+	<resultMap type="com.ruanyuan.pojo.User" id="BaseResultMap">
+		<collection property="orderList" ofType="Order" column="id" select="getOrderByUserId"/>
+	</resultMap>
+	
+	<!-- 一对多嵌套结果查询 -->
+	<select id="getUserAndOrder1" resultMap="BaseResultMap1">
+		select 
+			u.*,o.id oid,o.number,o.user_id
+		from
+			user u 
+		left join
+			order_master o
+		on 
+			u.id = o.user_id
+		where 
+			u.id = #{id}
+	</select>
+	<resultMap type="com.ruanyuan.pojo.User" id="BaseResultMap1">
+		<id property="id" column="id"/>
+		<result property="username" column="username"/>
+		<result property="address" column="address"/>
+		<collection property="orderList" ofType="Order">
+			<id property="id" column="oid"></id>
+			<result property="number" column="number"/>
+		</collection>
+	</resultMap>
+</mapper>
