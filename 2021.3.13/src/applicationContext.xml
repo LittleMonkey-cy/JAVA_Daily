@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+     http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+	<!-- 让spring创建对象的实例 -->
+	<bean id="bean" class="com.ruanyuan.constructor.Bean"></bean>
+	<!-- 让spring创建对象的实例 -->
+	<!-- factory-method指定方法名 -->
+	<bean id="bean1"
+		class="com.ruanyuan.static_factory.Static_factory"
+		factory-method="createBean">
+	</bean>
+	<!-- factory-bean 指定配置的实例化工厂 factory-method：指定方法名 -->
+	<bean id="factory" class="com.ruanyuan.factory.Factory" />
+	<bean id="bean2" factory-bean="factory"
+		factory-method="createBean" />
+	<!-- 作用域scope 单利模式 只创建一次 -->
+	<bean id="scope" class="com.ruanyuan.scope.Scope"
+		scope="singleton"></bean>
+	<!-- 原型模式 -->
+	<bean id="prototype" class="com.ruanyuan.scope.Scope"
+		scope="prototype"></bean>
+</beans>
