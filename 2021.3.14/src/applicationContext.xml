@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.springframework.org/schema/beans 
+     http://www.springframework.org/schema/beans/spring-beans-4.3.xsd"> 
+     <!--使用设值注入方法 将指定类配给spring，让spring创建其对象的实体类 -->
+     <bean id = "user1" class="com.ruanyuan.pojo.User">
+     	<property name="id" value="1"></property>
+     	<property name="username" value="NIKE"></property>
+     	<property name="password" value="123"></property>
+     	<property name="list">
+     		<list>
+     			<value>石家庄</value>
+     			<value>唐山</value>
+     		</list>
+     	</property>
+     </bean>
+     <!-- 使用有参构造方法 -->
+     <bean id="user2" class="com.ruanyuan.pojo.User">
+	   	<constructor-arg index="0" value="2"/>
+   		<constructor-arg index="1" value="Mike"/>
+		<constructor-arg index="2" value="456"/>
+		<constructor-arg index="3">
+			<list>
+				<value>石家庄</value>
+				<value>唐山</value>
+			</list>
+		</constructor-arg>
+     </bean>
+</beans>  
