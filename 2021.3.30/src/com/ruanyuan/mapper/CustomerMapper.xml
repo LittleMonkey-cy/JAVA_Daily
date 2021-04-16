@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruanyuan.mapper.CustomerMapper">
+	<!-- 根据id查询客户信息 -->
+	<select id="getCustomerById" parameterType="Integer"
+		resultType="customer">
+		select * from customer where cust_id = #{custId}
+	</select>
+	<!-- 查询所有客户信息 -->
+	<select id="getCustomers" resultType="customer">
+		select * from customer order by cust_id desc
+	</select>
+	<!-- 添加客户 自动增长，获取主键id -->
+	<insert id="insertCustomer" parameterType="customer"
+		keyProperty="custId" useGeneratedKeys="true">
+		insert into
+		customer(cust_name,cust_phone,cust_address)
+		values(#{custName},#{custPhone},#{custAddress})
+	</insert>
+	<!-- 使用<set>元素替换set，结合<if>元素，完成更新客户信息功能 -->
+	<!-- 修改用户 -->
+	<update id="updateCustomerById">
+		update customer
+		<!-- 使用set，if，标签相结合改进update语句 -->
+		<set>
+			<if test="custName != null and custName != '' ">
+				cust_name = #{custName},
+			</if>
+			<if test="custIndustry != null and custIndustry != '' ">
+				cust_industry = #{custIndustry},
+			</if>
+			<if test="custAddress != null and custAddress != '' ">
+				cust_address = #{custAddress}
+			</if>
+		</set>
+		where cust_id = #{custId}
+	</update>
+	<!-- 删除 客户信息 -->
+	<delete id="deleteCustomerById">
+		delete from customer
+		where cust_id =
+		#{custId,jdbcType=BIGINT}
+	</delete>
+</mapper>

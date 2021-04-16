@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/tx
+      http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	<!-- 读取 -->
+	<context:property-placeholder
+		location="druid.properties" />
+	<!-- 声明数据源DataSource，起到连接数据库的作用 -->
+	<bean id="myDataSource"
+		class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
+		destroy-method="close">
+		<!-- set注入给DruidDataSource提供连接数据库信息 -->
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="maxActive" value="${jdbc.maxActive}" />
+	</bean>
+	<!-- 事务管理器，依赖于数据源 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<!-- 注入数据源 -->
+		<property name="dataSource" ref="myDataSource" />
+	</bean>
+	<!-- 开启事务注解 -->
+	<tx:annotation-driven
+		transaction-manager="transactionManager" />
+	<!-- 配置mybatis工厂 -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- set注入，把数据库连接池付给dataSource属性 -->
+		<property name="dataSource" ref="myDataSource" />
+		<!-- mybatis主配置文件的位置 configLocation属性时Resource类型，读取配置文件 赋值，使用value；指定文件路径：使用classpath：表示文件的位置 -->
+		<property name="configLocation"
+			value="classpath:mybatis-config.xml" />
+	</bean>
+	<!-- mapper代理类开发 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.ruanyuan.mapper" />
+	</bean>
+	<!-- 开启扫描 -->
+	<context:component-scan
+		base-package="com.ruanyuan.service" />
+</beans>
