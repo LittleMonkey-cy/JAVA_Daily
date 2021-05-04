@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+  <servlet>
+    <servlet-name>springmvc</servlet-name>
+    <!--        配置前端过滤器-->
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <!--        初始化时加载配置文件-->
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:springmvc-config.xml</param-value>
+    </init-param>
+    <!--        容器在启动时立即加载servlet，参数为正数，数越小，加载最快-->
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>springmvc</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+  <!--  激活tomcat默认的servlet来处理静态文件访问-->
+<!--  <servlet-mapping>-->
+<!--    <servlet-name>default</servlet-name>-->
+<!--    <url-pattern>*.js</url-pattern>-->
+<!--    <url-pattern>*.css</url-pattern>-->
+<!--    <url-pattern>*.gif</url-pattern>-->
+<!--    <url-pattern>*.png</url-pattern>-->
+<!--    <url-pattern>*.jpg</url-pattern>-->
+<!--    <url-pattern>*.jpeg</url-pattern>-->
+<!--  </servlet-mapping>-->
+  <!--  配置编码过滤器-->
+  <filter>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+</web-app>
